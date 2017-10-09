@@ -38,6 +38,7 @@ public class PlaySound implements Runnable{
 	boolean ispaused=false;
 	Clip clip=null;
 	Object syncObject=new Object();
+	
 	/**
 	 * CONSTRUCTOR
 	 */
@@ -65,6 +66,9 @@ public class PlaySound implements Runnable{
 		info = new Info(SourceDataLine.class, audioFormat);
 		sampleRate = audioFormat.getSampleRate();
 		bitPerSample = audioFormat.getSampleSizeInBits();
+		
+		
+		
 		// opens the audio channel
 
 		try {
@@ -127,18 +131,20 @@ public class PlaySound implements Runnable{
 			clip = AudioSystem.getClip();
 			clip.open(audioInputStream);
 			clip.start();
+			
 		} catch (LineUnavailableException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	private double getLength() {
+	public double getLength() {
 		long frames = audioInputStream.getFrameLength();
 		double durationInSeconds = (frames + 0.0) / audioFormat.getFrameRate();
 		return durationInSeconds;
 	}
-
+	
+	
 	@Override
 	public void run() {
 		play();
@@ -161,4 +167,9 @@ public class PlaySound implements Runnable{
 		clip.start();
 	}
 
+	public void skip(int position) {
+		
+		clip.setMicrosecondPosition(position);
+		  
+	}
 }

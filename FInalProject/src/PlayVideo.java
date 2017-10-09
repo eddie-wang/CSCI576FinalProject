@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 /**
 For Video Part:
 	  Video Frame Size: 480*270
@@ -16,12 +17,15 @@ For Video Part:
 	  Bits per sample: 16
 	  **/
 public class PlayVideo {
-	 InputStream vis=null;
+	 //InputStream vis=null;
+	 RandomAccessFile raf;
 	 private final int height=270;
 	 private final int width=480;
-	 public PlayVideo(InputStream videoStream) {
-		 vis=videoStream;
+	 public PlayVideo(RandomAccessFile rf) {
+		 //vis=videoStream;
+		 raf=rf;
 	 }
+	 /*
 	 public BufferedImage getNextFrame(){
 		 byte [] bytes= null;
 		 try {
@@ -39,6 +43,65 @@ public class PlayVideo {
 				e.printStackTrace();
 			}
 		 return toBufferedImage(bytes);
+		 
+	 }
+	 */
+	 public void jumpToFrame(int num){
+		 
+		 try {
+				long len =480*270*3;
+				
+				raf.seek(num*len);
+				
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		
+		 
+	 }
+	 
+	 public BufferedImage getNextFrame(){
+		 byte [] bytes= null;
+		 try {
+				long len =480*270*3;
+				 bytes = new byte[(int)len];
+				int offset = 0;
+				int numRead = 0;
+				while (offset < bytes.length && (numRead=raf.read(bytes, offset, bytes.length-offset)) >= 0) {
+					offset += numRead;
+				}
+				if(offset<bytes.length){
+					return null;
+				}
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		 return toBufferedImage(bytes);
+		 
+	 }
+	 public byte[] getNextFrameByte(){
+		 byte [] bytes= null;
+		 try {
+				long len =480*270*3;
+				 bytes = new byte[(int)len];
+				int offset = 0;
+				int numRead = 0;
+				while (offset < bytes.length && (numRead=raf.read(bytes, offset, bytes.length-offset)) >= 0) {
+					offset += numRead;
+				}
+				if(offset<bytes.length)
+					return null;
+				
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		 return bytes;
 		 
 	 }
 	 public BufferedImage toBufferedImage(byte[] bytes){

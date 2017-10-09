@@ -1,6 +1,7 @@
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 
 public class MyPlayer {
 	public static void main(String[] args) {
@@ -11,15 +12,17 @@ public class MyPlayer {
 		String videoFileName=args[1];
 		InputStream ais=null;
 		InputStream vis=null;
+		RandomAccessFile rf =null;
 		try{
 			ais=getAudioSrteam(audioFileName);
 			vis=getVideoStream(videoFileName);
+			rf = new RandomAccessFile(videoFileName, "r");
 		}
 		catch(FileNotFoundException e){
 			System.err.println("The file does not exist!");
 			return;
 		}
-		GUI gui=new GUI(ais,vis);
+		GUI gui=new GUI(ais,vis,rf);
 		gui.run();
 	}
 
